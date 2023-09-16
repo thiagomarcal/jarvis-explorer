@@ -1,7 +1,7 @@
 # jarvis-explorer
 
 File explorer side project:
- - Focus on search files faster
+ - Focus on search files faster with a friendly UI
 
 ## Stack
 
