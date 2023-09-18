@@ -2,9 +2,19 @@
 
     import {invoke} from "@tauri-apps/api/tauri";
 
+    import {ProgressBar} from '@skeletonlabs/skeleton';
+
 
     async function listFiles(path: string) {
         return await invoke("list_files", {path})
+    }
+
+    const openEntry = async (entry) => {
+        console.log(`clicked: ${entry.name}`)
+        if (entry.is_dir) {
+            inputValue = entry.name
+            await doSearch()
+        }
     }
 
 
@@ -24,6 +34,7 @@
 
 
     async function doSearch() {
+        loading = true
         let result = await listFiles(inputValue)
         console.log(result);
         entries = result
@@ -36,17 +47,19 @@
                 created: parseDate(item.created.secs_since_epoch),
                 modified: parseDate(item.modified.secs_since_epoch)
             }))
+        loading = false
     }
 
     let entries: Entry[] = [];
 
     let inputValue = ""
+    let loading = false
 
 
 </script>
 
 <div class="flex flex-col gap-4 p-4">
-    <div class="card p-4 basis-1/4">
+    <div class="flex flex-col card basis-1/4 gap-0">
         <div class="flex flex-row flex-grow gap-3 p-3 h-full justify-center items-center">
             <div class="flex flex-row gap-3 basis-1/12 justify-center">
                 <div>
@@ -60,7 +73,6 @@
                     </button>
                 </div>
             </div>
-
             <div class="basis-3/4">
                 <input class="input p-3" type="search" name="demo" bind:value={inputValue}
                        placeholder="Search...">
@@ -71,28 +83,39 @@
                 </button>
             </div>
 
-
         </div>
+
+        {#if loading}
+            <div>
+                <ProgressBar />
+            </div>
+        {/if}
+
     </div>
     <div class="card basis-3/4 p-4 flex flex-row" >
         <div class="table-container max-h-screen overflow-y-auto">
             <!-- Native Table Element -->
-            <table class="table table-hover table-fixed">
+            <table class="table table-hover table-fixed w-full">
                 <thead>
                 <tr>
-                    <th>Name</th>
-                    <th>Is Directory</th>
-                    <th>Size</th>
+                    <th class="w-3/5">Name</th>
                     <th>Created</th>
                     <th>Modified</th>
                 </tr>
                 </thead>
                 <tbody>
                 {#each entries as entry}
-                    <tr>
-                        <td class="truncate ...">{entry.name}</td>
-                        <td>{entry.is_dir}</td>
-                        <td>{entry.size}</td>
+                    <tr on:dblclick={openEntry(entry)}>
+                        <td class="truncate ...">
+                            <div class="flex flex-row justify-items-center items-center gap-3">
+                                {#if entry.is_dir}
+                                    <i class="fa fa-solid fa-folder-open" style="color:gold"></i>
+                                {:else}
+                                    <i class="fa fa-solid fa-file"></i>
+                                {/if}
+                                {entry.name}
+                            </div>
+                        </td>
                         <td>{entry.created}</td>
                         <td>{entry.modified}</td>
                     </tr>
