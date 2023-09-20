@@ -114,7 +114,10 @@
                        placeholder="Search...">
             </div>
             <div class="flex flex-row gap-3 basis-1/12 justify-center">
-                <button type="button" class="btn-icon variant-filled opacity-{isInputValueDisabled? 50 : 100}" on:click={search} disabled="{isInputValueDisabled}">
+                <button type="button"
+                        class="btn-icon variant-filled opacity-{isInputValueDisabled? 50 : 100}"
+                        on:click={search}
+                        disabled={isInputValueDisabled}>
                     <i class="fa-solid fa-skull"></i>
                 </button>
             </div>
