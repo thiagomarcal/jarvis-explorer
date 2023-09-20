@@ -90,6 +90,7 @@
 
     $: isBackDisabled =  inputStackBack.length < 2
     $: isForwardDisabled =  inputStackForward.length === 0
+    $: isInputValueDisabled = !inputValue.trim()
 
 </script>
 
@@ -113,7 +114,7 @@
                        placeholder="Search...">
             </div>
             <div class="flex flex-row gap-3 basis-1/12 justify-center">
-                <button type="button" class="btn-icon variant-filled" on:click={search}>
+                <button type="button" class="btn-icon variant-filled opacity-{isInputValueDisabled? 50 : 100}" on:click={search} disabled="{isInputValueDisabled}">
                     <i class="fa-solid fa-skull"></i>
                 </button>
             </div>
@@ -122,7 +123,7 @@
 
         {#if loading}
             <div>
-                <ProgressBar/>
+                <ProgressBar height="h-1"/>
             </div>
         {/if}
 
