@@ -11,10 +11,11 @@
 
     const goBack = async () => {
         if (inputStackBack && inputStackBack.length > 1) {
-            inputStackForward.push(inputStackBack.pop())
-            console.log(`stack back: ${inputStackBack}`)
 
-            console.log(`search for on back: ${inputStackBack}`)
+            let lastElement  = inputStackBack.pop()
+            inputStackBack = [...inputStackBack]
+
+            inputStackForward = [...inputStackForward, lastElement]
             inputValue = inputStackBack[inputStackBack.length - 1];
             await doSearch()
         }
@@ -22,8 +23,11 @@
 
     const goForward = async () => {
         if (inputStackForward && inputStackForward.length) {
+
             let current = inputStackForward.pop()
-            inputStackBack.push(current)
+            inputStackForward = [...inputStackForward]
+
+            inputStackBack = [...inputStackBack, current]
             inputValue = current
             await doSearch()
         }
@@ -33,7 +37,7 @@
         console.log(`clicked: ${entry.name}`)
         if (entry.is_dir) {
             inputValue = entry.name
-            inputStackBack.push(inputValue)
+            inputStackBack = [...inputStackBack, inputValue]
             await doSearch()
             console.log(`stack: ${inputStackBack}`)
         }
@@ -54,7 +58,7 @@
     }
 
     async function search() {
-        inputStackBack.push(inputValue)
+        inputStackBack = [...inputStackBack, inputValue]
         await doSearch()
     }
 
@@ -84,6 +88,8 @@
     let inputValue = ""
     let loading = false
 
+    $: isBackDisabled =  inputStackBack.length < 2
+    $: isForwardDisabled =  inputStackForward.length === 0
 
 </script>
 
@@ -92,12 +98,12 @@
         <div class="flex flex-row flex-grow gap-3 p-3 h-full justify-center items-center">
             <div class="flex flex-row gap-3 basis-1/12 justify-center">
                 <div>
-                    <button type="button" on:click={goBack} class="btn-icon variant-filled">
+                    <button type="button" on:click={goBack} class="btn-icon variant-filled opacity-{isBackDisabled ? 50 : 100}">
                         <i class="fa-solid fa-arrow-left"></i>
                     </button>
                 </div>
                 <div>
-                    <button type="button" on:click={goForward} class="btn-icon variant-filled">
+                    <button type="button" on:click={goForward} class="btn-icon variant-filled opacity-{isForwardDisabled ? 50 : 100}">
                         <i class="fa-solid fa-arrow-right"></i>
                     </button>
                 </div>
