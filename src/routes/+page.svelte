@@ -1,4 +1,4 @@
-<script lang="ts">
+<script lang='ts'>
 	import { Ok, Err, Result } from 'ts-results';
 	import { invoke } from '@tauri-apps/api/tauri';
 	import { ProgressBar } from '@skeletonlabs/skeleton';
@@ -34,7 +34,7 @@
 	$: isInputValueDisabled = !inputValue.trim();
 
 	// functions
-	async function listFiles(path: string) : Promise<ResultItem[]>{
+	async function listFiles(path: string): Promise<ResultItem[]> {
 		return await invoke('list_files', { path });
 	}
 
@@ -136,6 +136,7 @@
 					created: parseDate(item.created),
 					modified: parseDate(item.modified)
 				}));
+
 		} catch (e) {
 			console.log('Error: ' + e);
 			return new Err<Errors>('FS_PROBLEM');
@@ -147,72 +148,72 @@
 	}
 </script>
 
-<div class="flex flex-col gap-4 p-4">
-	<div class="flex flex-col card basis-1/4 gap-0">
-		<div class="flex flex-row flex-grow gap-3 p-3 h-full justify-center items-center">
-			<div class="flex flex-row gap-3 basis-1/12 justify-center">
+<div class='flex flex-col gap-4 p-4'>
+	<div class='flex flex-col card basis-1/4 gap-0'>
+		<div class='flex flex-row flex-grow gap-3 p-3 h-full justify-center items-center'>
+			<div class='flex flex-row gap-3 basis-1/12 justify-center'>
 				<div>
-					<button type="button" on:click={goBack} class="btn-icon variant-filled opacity-{isBackDisabled ? 50 : 100}">
-						<i class="fa-solid fa-arrow-left"></i>
+					<button type='button' on:click={goBack} class='btn-icon variant-filled opacity-{isBackDisabled ? 50 : 100}'>
+						<i class='fa-solid fa-arrow-left'></i>
 					</button>
 				</div>
 				<div>
 					<button
-						type="button"
+						type='button'
 						on:click={goForward}
-						class="btn-icon variant-filled opacity-{isForwardDisabled ? 50 : 100}">
-						<i class="fa-solid fa-arrow-right"></i>
+						class='btn-icon variant-filled opacity-{isForwardDisabled ? 50 : 100}'>
+						<i class='fa-solid fa-arrow-right'></i>
 					</button>
 				</div>
 			</div>
-			<div class="basis-3/4">
-				<input class="input p-3" type="search" name="demo" bind:value={inputValue} placeholder="Search..." />
+			<div class='basis-3/4'>
+				<input class='input p-3' type='search' name='demo' bind:value={inputValue} placeholder='Search...' />
 			</div>
-			<div class="flex flex-row gap-3 basis-1/12 justify-center">
+			<div class='flex flex-row gap-3 basis-1/12 justify-center'>
 				<button
-					type="button"
-					class="btn-icon variant-filled opacity-{isInputValueDisabled ? 50 : 100}"
+					type='button'
+					class='btn-icon variant-filled opacity-{isInputValueDisabled ? 50 : 100}'
 					on:click={search}
 					disabled={isInputValueDisabled}>
-					<i class="fa-solid fa-skull"></i>
+					<i class='fa-solid fa-skull'></i>
 				</button>
 			</div>
 		</div>
 
 		{#if loading}
 			<div>
-				<ProgressBar height="h-1" />
+				<ProgressBar height='h-1' />
 			</div>
 		{/if}
 	</div>
-	<div class="card basis-3/4 p-4 flex flex-row">
-		<div class="table-container max-h-screen overflow-y-auto">
+	<div class='card basis-3/4 p-4 flex flex-row'>
+		<div class='table-container max-h-screen overflow-y-auto'>
 			<!-- Native Table Element -->
-			<table class="table table-hover table-fixed w-full">
+			<table class='table table-hover table-fixed w-full'>
 				<thead>
-					<tr>
-						<th class="w-3/5">Name</th>
-						<th>Created</th>
-						<th>Modified</th>
-					</tr>
+				<tr>
+					<th class='w-3/5'>Name</th>
+					<th>Created</th>
+					<th>Modified</th>
+				</tr>
 				</thead>
 				<tbody>
-					{#each entries as entry}
-						<tr on:dblclick={openEntry(entry)}>
-							<td class="truncate ...">
-								<div class="flex flex-row justify-items-center items-center gap-3">
-									{#if entry.is_dir}
-										<i class="fa fa-solid fa-folder-open" style="color:gold"></i>
-									{:else}
-										<i class="fa fa-solid fa-file"></i>
-									{/if}
-									{entry.name}
-								</div>
-							</td>
-							<td>{entry.created}</td>
-							<td>{entry.modified}</td>
-						</tr>
-					{/each}
+				{#each entries as entry}
+					<tr on:dblclick={openEntry(entry)}>
+						<td class='truncate ...'>
+							<div class='flex flex-row justify-items-center items-center gap-3'>
+								{#if entry.is_dir}
+									<i class='fa fa-solid fa-folder-open' style='color:gold'></i>
+								{:else}
+									<i class='fa fa-solid fa-file'></i>
+								{/if}
+								{entry.name}
+							</div>
+						</td>
+						<td>{entry.created}</td>
+						<td>{entry.modified}</td>
+					</tr>
+				{/each}
 				</tbody>
 			</table>
 		</div>
