@@ -15,8 +15,8 @@ struct AppState {
 struct AppFile {
     filename: String,
     size: u64,
-    created: SystemTime,
-    modified: SystemTime,
+    created: u64,
+    modified: u64,
     is_dir: bool,
 }
 
@@ -26,7 +26,7 @@ pub enum AppError {
 }
 
 #[tauri::command]
-fn list_files(path: &str, state: tauri::State<AppState>) -> Result<Vec<Result<AppFile, AppError>>, AppError> {
+fn list_files(path: &str) -> Result<Vec<Result<AppFile, AppError>>, AppError> {
     let result = match fs::read_dir(path) {
         Ok(paths) => {
             let mut files: Vec<Result<AppFile, AppError>> = Vec::new();
@@ -36,7 +36,7 @@ fn list_files(path: &str, state: tauri::State<AppState>) -> Result<Vec<Result<Ap
             }
             Ok(files)
         }
-        Err(e) => {
+        Err(_e) => {
             Err(AppError::RetrievingFile)
         }
     };
@@ -52,13 +52,13 @@ fn extract_app_file(path: io::Result<DirEntry>) -> Result<AppFile, AppError> {
             let app_file = AppFile {
                 filename: String::from(entry.path().to_str().unwrap_or_default()),
                 size: entry_metadata.len(),
-                created: entry_metadata.created().unwrap(),
-                modified: entry_metadata.modified().unwrap(),
+                created: entry_metadata.created().unwrap().duration_since(SystemTime::UNIX_EPOCH).unwrap().as_secs(),
+                modified: entry_metadata.modified().unwrap().duration_since(SystemTime::UNIX_EPOCH).unwrap().as_secs(),
                 is_dir: entry.path().is_dir(),
             };
             Ok(app_file)
         }
-        Err(e) => {
+        Err(_e) => {
             Err(AppError::RetrievingFile)
         }
     };
@@ -68,7 +68,7 @@ fn extract_app_file(path: io::Result<DirEntry>) -> Result<AppFile, AppError> {
 
 fn main() {
     tauri::Builder::default()
-        .manage(AppState{counter: Mutex::new(0)})
+        .manage(AppState { counter: Mutex::new(0) })
         .invoke_handler(tauri::generate_handler![list_files])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
